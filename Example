@@ -1,0 +1,17 @@
+source("FamANC.functions.R")
+
+
+#### load simulated fam and map file in plink format. 
+load("data/sim.fam.Rdata") ### columns are FID, IID, PAT, MAT, SEX, PHE
+load("data/sim.map.Rdata")
+load("data/sim.anc.Rdata")
+load("data/genetic_map_GRCh37_chr22.RData")
+
+
+# Run FamANC
+library("kinship2")
+Morgan=Genetic.Distance(sim.map,ref.gmap)
+mPath=Mendelian.Path(sim.fam)
+ancs1=Mendelian.Anc(sim.anc,mPath,Morgan,t=6,thres=2,epsilon=0.1)
+
+
