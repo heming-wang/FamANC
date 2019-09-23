@@ -213,6 +213,86 @@ Mendelian.Anc=function(anc,mPath,Morgan,t=6,thres=2,epsilon){
 }
 
 
+## plot pedigree
+plotped=function(ped){
+  names(ped)=c("FID","IID","PAT","MAT","SEX","PHE")
+  ped$no=1:dim(ped)[1]
+  ped1=pedigree(id=ped$IID,dadid=ped$PAT,momid=ped$MAT,sex=ped$SEX,famid=ped$FID)
+  plot(ped1[paste(ped$FID[1])])
+}
+
+                     
+## Divide large pedigree missing first-generation into smaller pedigrees 
+Pedigree.Divide=function(ped){
+  names(ped)=c("FID","IID","PAT","MAT","SEX","PHE")
+  ped$no=1:dim(ped)[1]
+  ped$depth=kindepth(id=ped$IID,dad.id=ped$PAT,mom.id=ped$MAT)
+
+  for(i in 1:dim(ped)[1]){
+    ped$parent.no[i] = sum(c(ped$PAT[i],ped$MAT[i]) %in% ped$IID)
+  }
+  
+  ped=ped[order(10*ped$depth+ped$parent.no),]
+  ped$PAT[ped$depth==0]=0
+  ped$MAT[ped$depth==0]=0
+  
+  FID1=c(1:dim(ped)[1])
+
+  no.founder=sum(ped$parent.no==0)
+  if(no.founder<dim(ped)[1]){
+    group=list()
+    for(i in 1:dim(ped)[1]){
+      group[[i]]=i
+    }
+    
+    for(i in (no.founder+1):dim(ped)[1]){
+      
+      if(ped$parent.no[i]==1){
+        parent=which(ped$IID %in% c(ped$PAT[i],ped$MAT[i]))
+        FamID=FID1[c(parent,i)]
+        group[[parent]]=group[[i]]=c(group[[parent]],group[[i]])
+        FID1[group[[i]]]=FID1[parent]
+        
+      } else {
+        father=which(ped$IID == ped$PAT[i])
+        mother=which(ped$IID == ped$MAT[i])
+        FamID=FID1[c(father,mother,i)]
+        group[[father]]=group[[mother]]=group[[i]]=c(group[[father]],group[[mother]],group[[i]])
+        
+        
+        FID1[group[[i]]]=min(FID1[c(father,mother)])
+        
+        
+      }
+    }
+    for(i in (no.founder+1):dim(ped)[1]){
+      
+      if(ped$parent.no[i]==1){
+        parent=which(ped$IID %in% c(ped$PAT[i],ped$MAT[i]))
+        FamID=FID1[c(parent,i)]
+        group[[parent]]=group[[i]]=c(group[[parent]],group[[i]])
+        FID1[group[[i]]]=FID1[parent]
+        
+      } else {
+        father=which(ped$IID == ped$PAT[i])
+        mother=which(ped$IID == ped$MAT[i])
+        FamID=FID1[c(father,mother,i)]
+        group[[father]]=group[[mother]]=group[[i]]=c(group[[father]],group[[mother]],group[[i]])
+        
+        
+        FID1[group[[i]]]=min(FID1[c(father,mother)])
+        
+        
+      }
+    }
+    
+    
+  }
 
 
+  ped$FID=paste(ped$FID,"_",FID1,sep="")
+  ped=ped[order(ped$FID),]
+  return(ped[,c(1:7)])
+
+}
 
