@@ -8,11 +8,11 @@ FamANC estimates local ancestry in large pedigrees by:
 
 
 # Examples
-## Load required package
+### Load required package
 ```
 library("kinship2")
 ```
-## Import data
+### Import data
 Load map and fam file in PLINK format
 ```
 load("sim.map.Rdata") ### FID IID PAT MAT SEX PHE
@@ -26,7 +26,7 @@ Load reference genetic map
 ```
 load("data/genetic_map_GRCh37_chr22.RData") 
 ```
-## Run FamANC
+### Run FamANC
 Generate genetic distance between markers
 ```
 Morgan=Genetic.Distance(sim.map,ref.gmap)
