@@ -96,11 +96,11 @@ Prob.Error=function(g1,g2,epsilon){
 
 
 ## Choose optimal path
-Optimal.Path=function(ped,g,ped.path,thres,epsilon){
+Optimal.Path=function(g,ped.path,thres,epsilon){
 
 
   err=apply(ped.path,1,function(x) sum(x!=g))
-  if(min(err==0)){
+  if(min(err)==0)){
     optimal.path=g
     pr=1
   } else {
@@ -116,18 +116,6 @@ Optimal.Path=function(ped,g,ped.path,thres,epsilon){
   return(list(optimal.path=min.err.path,pr=pr))
 }
 
-
-
-
-
-
-##
-Pedigree.Hap=function(anc){
-  hap=apply(anc,2,function(x) paste(x,sep="",collapse =""))
-  z=rle(hap)
-  hap=sapply(z$values,function(x) as.numeric(strsplit(x,"")[[1]]))
-  return(list(length=z$lengths,haplotype=hap))
-}
 
 
 ## Correcting ancestry
@@ -162,7 +150,7 @@ Mendelian.Anc=function(anc,mPath,Morgan,t=6,thres=2,epsilon){
   for(i in 1:dim(haplotype)[2]){
     if(!logic[i]){
 
-      path = Optimal.Path(ped,haplotype[,i],ped.path,thres,epsilon)
+      path = Optimal.Path(haplotype[,i],ped.path,thres,epsilon)
       if(length(path$pr)==1){
         haplotype.mendel[,i]=haplotype[,i]
       } else {
