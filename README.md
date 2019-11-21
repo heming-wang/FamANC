@@ -22,7 +22,7 @@ library("kinship2")
 
 ### Genetic.Distance(map,gmap)
 Estimate genetic distance between neighboring markers for a set of variants on the same chromosome (map). 
-Reference genetic map (gmap) is needed.
+A reference genetic map (gmap) is needed.
 
 Load map file in PLINK format
 ```
@@ -60,14 +60,14 @@ Morgan[1:10]
 ```
 
 ### Mendelian.Path(ped)
-Mendelian path is a set of all possible local ancestry markers at a position in a pedigree (ped) satisfying Mendelian inheritance.
-For example, in a nuclear family with two parents and one offspring (n=3), the Mendelian path corresponding to (Father, Mother, Child) = {(0,0,0), (0,1,0), (0,1,1), (0,2,1), (1,0,0), (1,0,1), (1,1,0), (1,1,1), (1,1,2), (1,2,1), (1,2,2), (2,0,1), (2,1,1), (2,1,2,), (2,2,2)}.
+Mendelian paths are all possible local ancestry markers at a position in a pedigree (ped) satisfying Mendelian inheritance.
+For example, in a nuclear family with two parents and one offspring (n=3), the Mendelian paths corresponding to (Father, Mother, Child) = {(0,0,0), (0,1,0), (0,1,1), (0,2,1), (1,0,0), (1,0,1), (1,1,0), (1,1,1), (1,1,2), (1,2,1), (1,2,2), (2,0,1), (2,1,1), (2,1,2,), (2,2,2)}. Function Mendelian.Path returns to a reordered ped file and the Mendelian paths with the corresponding order.
 
 Load fam file in PLINK format
 ```
 load("data/sim.fam.Rdata") ### FID IID PAT MAT SEX PHE
 
-sim.fam 
+sim.fam ## 10 individuals
 ##    V1  V2  V3  V4 V5 V6
 ## 21  2 201   0   0  1 -9
 ## 22  2 202   0   0  2 -9
@@ -82,20 +82,21 @@ sim.fam
 ```
 Generate Mendelian path for sim.fam
 ```
-mPath=Mendelian.Path(sim.fam)
+mPath=Mendelian.Path(sim.fam) 
 
-mPath$ped.path[1:10,]
+ls(mPath)
+## [1] "ped"      "ped.path"
+
+dim(mPath$ped.path)
+## [1] 3615   10
+
+mPath$ped.path[1:5,]
 ##    201 202 203 207 204 205 206 208 209 210
 ## 1    0   0   0   0   0   0   0   0   0   0
 ## 2    1   0   0   0   0   0   0   0   0   0
 ## 4    0   1   0   0   0   0   0   0   0   0
 ## 5    1   1   0   0   0   0   0   0   0   0
 ## 10   0   0   1   0   0   0   0   0   0   0
-## 11   1   0   1   0   0   0   0   0   0   0
-## 13   0   1   1   0   0   0   0   0   0   0
-## 14   1   1   1   0   0   0   0   0   0   0
-## 28   0   0   0   1   0   0   0   0   0   0
-## 29   1   0   0   1   0   0   0   0   0   0
 ```
 ### Prob.yx(xt,yt,epsilon)
 The probability of an inferred local ancestry path (yt) given a Mendelian path (xt) given the average allelic local ancestry inference error rate epsilon.
@@ -107,9 +108,12 @@ pr=Prob.yx(xt,yt,epsilon=0.01); pr
 ## [1] 7.684768e-32
 ```
 ### Select.Path(yt,ped.path,thres,epsilon)
-The probabilities of observing many >=3 individuals with ancestry error at the same locus were small in simulated pedigrees. To save computation time, we select a smaller set of Mendelian path (ped.path) with a threshold number (thres=2) of values different from the observed path (yt). 
+The probabilities of observing many >=3 individuals with ancestry error at the same locus were small in simulated pedigrees. To save computation time, we select a smaller set of Mendelian paths (ped.path) with a threshold number (thres=2) of values different from the observed path (yt). Function Select.Path returns to the selected Mendelian paths and the corrsponding probabilities of observing yt.
 ```
 sPath=Select.Path(yt,mPath$ped.path,thres=2,epsilon=0.01)
+
+ls(sPath)
+## [1] "pr"          "select.path"
 ```
 ### Mendelian.Anc(anc,mPath,Morgan,t,thres,epsilon)
 Correct local ancestries estimated from existing software (anc). t is the number of generations since admixture.
