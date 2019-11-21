@@ -4,13 +4,13 @@ FamANC estimates local ancestry in large pedigrees by:
 
 2. Using FamANC to improve the local ancestry inference accuracy by using the known pedigree structure to correct inference errors that arise from
    - Mendelian inconsistencies identified from the pedigree structure
-   - double crossovers occurring within 2cM
+   - Double crossovers occurring within 2cM
 
 # R Functions
 - Genetic.Distance
 - Mendelian.Path
 - Prob.Error
-- Optimal.Path
+- Select.Path
 - Mendelian.Anc
 - Pedigree.Divide
 - plotped
@@ -106,13 +106,13 @@ yt=c(2,2,1,2,2,1,2,1,2,2)
 pr=Prob.yx(xt,yt,epsilon=0.01); pr
 ## [1] 7.684768e-32
 ```
-### Select.Path(g,ped.path,thres,epsilon)
-The probabilities of observing many >=3 individuals with ancestry error at the same locus were small in simulated pedigrees. To save computation time, we select a smaller set of Mendelian path (ped.path) with a threshold number (thres=2) of values different from the observed path (g). 
+### Select.Path(yt,ped.path,thres,epsilon)
+The probabilities of observing many >=3 individuals with ancestry error at the same locus were small in simulated pedigrees. To save computation time, we select a smaller set of Mendelian path (ped.path) with a threshold number (thres=2) of values different from the observed path (yt). 
 ```
 sPath=Select.Path(yt,mPath$ped.path,thres=2,epsilon=0.01)
 ```
 ### Mendelian.Anc(anc,mPath,Morgan,t,thres,epsilon)
-Correct local ancestries estimated from existing software (anc).t is the number of generations since admixture.
+Correct local ancestries estimated from existing software (anc). t is the number of generations since admixture.
 
 Load local ancestry file inferred by existing software (e.g. SABER+ and HAPMIX)
 ```
