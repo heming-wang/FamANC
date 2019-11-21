@@ -97,22 +97,22 @@ mPath$ped.path[1:10,]
 ## 28   0   0   0   1   0   0   0   0   0   0
 ## 29   1   0   0   1   0   0   0   0   0   0
 ```
-### Prob.Error(g1,g2,epsilon)
-The probability of an observed path given a Mendelian path (g1 and g2) with average allelic local ancestry inference error rate epsilon.
+### Prob.yx(xt,yt,epsilon)
+The probability of an inferred local ancestry path (yt) given a Mendelian path (xt) given the average allelic local ancestry inference error rate epsilon.
 ```
-g1=mPath$ped.path[1,]
-g2=c(1,2,1,2,2,1,2,1,2,2)
-pr=Prob.Error(g1,g2,epsilon=0.01)
-```
-### Optimal.Path(ped,g,ped.path,thres,epsilon)
-For an observed pedigree path (g), choose an optimal Mendelian path (mPath) with minimum error probability
-```
+xt=mPath$ped.path[1,]
+yt=c(2,2,1,2,2,1,2,1,2,2)
 
-oPath=Opitimal.Path(mPath$ped,g,mPath$ped.path,thres=2,epsilon=0.01)
+pr=Prob.yx(xt,yt,epsilon=0.01); pr
+## [1] 7.684768e-32
+```
+### Select.Path(g,ped.path,thres,epsilon)
+The probabilities of observing many >=3 individuals with ancestry error at the same locus were small in simulated pedigrees. To save computation time, we select a smaller set of Mendelian path (ped.path) with a threshold number (thres=2) of values different from the observed path (g). 
+```
+sPath=Select.Path(yt,mPath$ped.path,thres=2,epsilon=0.01)
 ```
 ### Mendelian.Anc(anc,mPath,Morgan,t,thres,epsilon)
-Correct local ancestries estimated from existing software (anc), with Mendelian path (mPath), genetic distance (Morgan), 
-generations since admixture (t), 
+Correct local ancestries estimated from existing software (anc).t is the number of generations since admixture.
 
 Load local ancestry file inferred by existing software (e.g. SABER+ and HAPMIX)
 ```
@@ -131,7 +131,7 @@ sim.anc[1:5,1:5]
 ```
 Correct errors in local ancestry
 ```
-ancs1=Mendelian.Anc(sim.anc,mPath,Morgan,t=6,thres=2,epsilon=0.01)
+ancs1=Mendelian.Anc(sim.anc,mPath,Morgan,t=8,thres=2,epsilon=0.01)
 ```
 ### Pedigree.Divide(big.ped)
 For some pedigrees with missing first-generation genotype, we removed the first generation and divided them into smaller pedigrees.
@@ -145,18 +145,21 @@ plotped(ped)
 ```
 
 # Examples
-### Import data
-
-
-
-
-
-### Run FamANC
-
-
+### Source R functions
 ```
+source("FamANC.functions.R")
+```
+### Import data
+```
+load("data/sim.fam.Rdata")
+load("data/sim.map.Rdata") 
+load("data/sim.anc.Rdata")
+load("data/genetic_map_GRCh37_chr22.RData")
+```
+### Run FamANC
+```
+Morgan=Genetic.Distance(sim.map,ref.gmap)
+mPath=Mendelian.Path(sim.fam)
+ancs1=Mendelian.Anc(sim.anc,mPath,Morgan,t=8,thres=2,epsilon=0.01)
 
-
-dim(ancs1)
-## [1]    10 18210
 ```
